@@ -5,11 +5,14 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     public GameObject target;
-    private Transform tr;
-
     public float dist = 10.0f;
-    public float height = 5.0f;
+    public float height = 0.0f;
     public float smoothRotate = 5.0f;
+    public float mouseSensitivity = 400f; //마우스감도
+
+    private Transform tr;
+    private float MouseY;
+    private float MouseX;
 
     public float CameraSpeed = 10.0f;
 
@@ -17,12 +20,20 @@ public class CameraMovement : MonoBehaviour
     {
         tr = GetComponent<Transform>();
     }
+    void Update()
+    {
+        Rotate();
+    }
 
     private void LateUpdate()
     {
         float curYAngle = Mathf.LerpAngle(tr.eulerAngles.y, target.transform.eulerAngles.y, smoothRotate * Time.deltaTime);
         Quaternion rot = Quaternion.Euler(0, curYAngle, 0);
-        tr.position = target.transform.position - (rot * Vector3.forward * dist) + (Vector3.up * height);
-        tr.LookAt(target.transform);
+    }
+
+    private void Rotate()
+    {
+
+
     }
 }

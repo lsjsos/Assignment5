@@ -5,11 +5,13 @@ using UnityEngine.InputSystem;
 
 public class Movement : MonoBehaviour
 {
+    public Camera camera;
     public float speed;
     public float jumpPower;
     public float rotationSpeed;
     private Vector2 movementValue;
     private float lookValue;
+    private float cameraLook;
     private Rigidbody rb;
 
     private bool doubleJump = false;
@@ -35,6 +37,7 @@ public class Movement : MonoBehaviour
     public void OnLook(InputValue value)
     {
         lookValue = value.Get<Vector2>().x * rotationSpeed;
+        cameraLook = - value.Get<Vector2>().y * rotationSpeed;
         if (rb.position.y <= 0.6)
             isFloor = true;
         else
@@ -63,7 +66,14 @@ public class Movement : MonoBehaviour
     void Update()
     {
         rb.AddRelativeForce(movementValue.x * Time.deltaTime, 0, movementValue.y * Time.deltaTime);
-        rb.AddRelativeTorque(0, lookValue * Time.deltaTime, 0);
+        rb.AddRelativeTorque(0, lookValue * 20 * Time.deltaTime, 0);
+        camera.transform.Rotate(0, lookValue * Time.deltaTime, 0);
+        
+    }
+
+    private void LateUpdate()
+    {
+        camera.transform.Rotate(cameraLook * Time.deltaTime, 0, 0);
     }
 
     void DoubleJump()
