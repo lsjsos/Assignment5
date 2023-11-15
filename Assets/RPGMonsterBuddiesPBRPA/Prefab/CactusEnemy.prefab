@@ -439,7 +439,7 @@ GameObject:
   - component: {fileID: -1245910425003291218}
   - component: {fileID: 6997654716604841504}
   m_Layer: 7
-  m_Name: Enemy
+  m_Name: CactusEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

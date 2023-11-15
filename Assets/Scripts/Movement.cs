@@ -67,13 +67,11 @@ public class Movement : MonoBehaviour
     {
         rb.AddRelativeForce(movementValue.x * Time.deltaTime, 0, movementValue.y * Time.deltaTime);
         rb.AddRelativeTorque(0, lookValue * 20 * Time.deltaTime, 0);
-        camera.transform.Rotate(0, lookValue * Time.deltaTime, 0);
-        
     }
 
     private void LateUpdate()
     {
-        camera.transform.Rotate(cameraLook * Time.deltaTime, 0, 0);
+        camera.transform.Rotate(Mathf.Clamp(cameraLook, -30, 30) * Time.deltaTime, 0, 0);
     }
 
     void DoubleJump()
