@@ -1,5 +1,5 @@
 {
-    "name": "Assignment3",
+    "name": "Assignment5",
     "maps": [
         {
             "name": "Player",
@@ -286,7 +286,7 @@
                 {
                     "name": "",
                     "id": "ff265e72-86b4-4e32-bd93-8dc4f8467518",
-                    "path": "<Keyboard>/shift",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

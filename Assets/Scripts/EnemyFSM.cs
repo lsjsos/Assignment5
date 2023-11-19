@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class EnemyFSM : MonoBehaviour
 {
-    public enum EnemyState { GoToBase, AttackBase, ChasePlayer, AttackPlayer }
+    public enum EnemyState { GoToBase, AttackBase, ChasePlayer, AttackPlayer, Photonization, SuicideBombing }
     public EnemyState currentState;
     public Sight sightSensor;
     public Transform baseTransform;
@@ -14,6 +14,12 @@ public class EnemyFSM : MonoBehaviour
     public float lastShootTime;
     public GameObject bulletPrefab;
     public float fireRate;
+    public Life life;
+    public Life playerLife;
+    public GameObject photon;
+    public bool isPhoton = false;
+    public bool isBomb = false;
+    public ParticleSystem explosion;
 
     private NavMeshAgent agent;
 
@@ -25,7 +31,7 @@ public class EnemyFSM : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        playerLife = GameObject.FindWithTag("Player").GetComponent<Life>();
     }
 
     // Update is called once per frame
@@ -47,22 +53,41 @@ public class EnemyFSM : MonoBehaviour
         {
             AttackPlayer();
         }
+        else if(currentState == EnemyState.Photonization)
+        {
+            Photonization();
+        }
+        else if(currentState == EnemyState.SuicideBombing)
+        {
+            SuicideBombing();
+        }
     }
 
     void GoToBase()
     {
         agent.isStopped = false;
         agent.SetDestination(baseTransform.position);
-
-        if(sightSensor.detectedObject != null)
+        if (isPhoton)
         {
-            currentState = EnemyState.ChasePlayer;
+            currentState = EnemyState.Photonization;
+        }
+        if (sightSensor.detectedObject != null)
+        {
+            if (!sightSensor.detectedObject.CompareTag("PT"))
+            {
+                currentState = EnemyState.ChasePlayer;
+            }
         }
 
         float distanceToBase = Vector3.Distance(transform.position, baseTransform.position);
         if (distanceToBase < baseAttackDistance)
         {
             currentState = EnemyState.AttackBase;
+        }
+
+        if (life.amount <= 300)
+        {
+            currentState = EnemyState.SuicideBombing;
         }
     }
     void AttackBase()
@@ -74,7 +99,11 @@ public class EnemyFSM : MonoBehaviour
     void ChasePlayer()
     {
         agent.isStopped = false;
-        if(sightSensor.detectedObject == null)
+        if (isPhoton)
+        {
+            currentState = EnemyState.Photonization;
+        }
+        if (sightSensor.detectedObject == null)
         {
             currentState = EnemyState.GoToBase;
             return;
@@ -86,10 +115,19 @@ public class EnemyFSM : MonoBehaviour
         {
             currentState = EnemyState.AttackPlayer;
         }
+
+        if (life.amount <= 300)
+        {
+            currentState = EnemyState.SuicideBombing;
+        }
     }
     void AttackPlayer()
     {
         agent.isStopped = true;
+        if (life.amount <= 300)
+        {
+            currentState = EnemyState.SuicideBombing;
+        }
         if (sightSensor.detectedObject == null)
         {
             currentState = EnemyState.GoToBase;
@@ -103,6 +141,26 @@ public class EnemyFSM : MonoBehaviour
         if (distanceToPlayer > playerAttackDistance * 1.1f)
         {
             currentState = EnemyState.ChasePlayer;
+        }
+    }
+
+    void Photonization()
+    {
+        photon.SetActive(true);
+        life.amount += 300;
+
+        currentState = EnemyState.SuicideBombing;
+    }
+
+    void SuicideBombing()
+    {
+        agent.speed += 10;
+        agent.SetDestination(GameObject.FindWithTag("Player").transform.position);
+        if (isBomb)
+        {
+            Destroy(transform.root.gameObject);
+            Instantiate(explosion, transform.position, Quaternion.identity);
+            playerLife.amount -= 300;
         }
     }
 

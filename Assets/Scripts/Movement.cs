@@ -38,10 +38,6 @@ public class Movement : MonoBehaviour
     {
         lookValue = value.Get<Vector2>().x * rotationSpeed;
         cameraLook = - value.Get<Vector2>().y * rotationSpeed;
-        if (rb.position.y <= 0.6)
-            isFloor = true;
-        else
-            isFloor = false;
     }
 
     public void OnJump(InputValue value)
@@ -78,5 +74,13 @@ public class Movement : MonoBehaviour
     {
         rb.AddRelativeForce(0, jumpPower, 0);
         doubleJump = false;
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isFloor = true;
+        }
     }
 }
