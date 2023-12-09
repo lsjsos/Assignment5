@@ -21,9 +21,6 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
         rb = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
     }
@@ -31,6 +28,8 @@ public class Movement : MonoBehaviour
     public void OnMove(InputValue value)
     {
         movementValue = value.Get<Vector2>() * speed;
+        anim.SetFloat("X", value.Get<Vector2>().x);
+        anim.SetFloat("Y", value.Get<Vector2>().y);
         anim.SetBool("Aiming", true);
     }
 

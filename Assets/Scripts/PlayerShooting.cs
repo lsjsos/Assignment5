@@ -10,6 +10,7 @@ public class PlayerShooting : MonoBehaviour
     public Animator anim;
     public AudioSource aus;
     public AudioClip shoot;
+    public int bulletsAmount;
 
     private void Start()
     {
@@ -18,8 +19,9 @@ public class PlayerShooting : MonoBehaviour
 
     public void OnFire(InputValue value)
     {
-        if (value.isPressed)
+        if (value.isPressed && bulletsAmount > 0 && Time.timeScale > 0)
         {
+            bulletsAmount--;
             anim.SetTrigger("Shoot");
             aus.PlayOneShot(shoot);
             GameObject clone = Instantiate(prefab);
