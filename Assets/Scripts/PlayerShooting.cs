@@ -10,7 +10,10 @@ public class PlayerShooting : MonoBehaviour
     public Animator anim;
     public AudioSource aus;
     public AudioClip shoot;
+    public AudioClip reload;
     public int bulletsAmount;
+    private bool isReload = false;
+    private int count = 0;
 
     private void Start()
     {
@@ -19,7 +22,7 @@ public class PlayerShooting : MonoBehaviour
 
     public void OnFire(InputValue value)
     {
-        if (value.isPressed && bulletsAmount > 0 && Time.timeScale > 0)
+        if (value.isPressed && bulletsAmount > 0 && Time.timeScale > 0 && isReload == false)
         {
             bulletsAmount--;
             anim.SetTrigger("Shoot");
@@ -28,5 +31,22 @@ public class PlayerShooting : MonoBehaviour
             clone.transform.position = shootPoint.transform.position;
             clone.transform.rotation = shootPoint.transform.rotation;
         }
+        else if(value.isPressed && bulletsAmount == 0 && count == 0)
+        {
+            StartCoroutine("Reload");
+        }
+    }
+
+    public IEnumerator Reload()
+    {
+        count++;
+        anim.SetBool("Reloading", true);
+        aus.PlayOneShot(reload);
+        isReload = true;
+        yield return new WaitForSeconds(1.5f);
+        bulletsAmount += 12;
+        anim.SetBool("Reloading", false);
+        isReload = false;
+        count--;
     }
 }
