@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class Movement : MonoBehaviour
 {
-    public Camera camera;
+    public Camera _camera;
     public float speed;
     public float jumpPower;
     public float rotationSpeed;
@@ -66,7 +66,7 @@ public class Movement : MonoBehaviour
 
     private void LateUpdate()
     {
-        camera.transform.Rotate(Mathf.Clamp(cameraLook, -30, 30) * Time.deltaTime, 0, 0);
+        _camera.transform.Rotate(Mathf.Clamp(cameraLook, -30, 30) * Time.deltaTime, 0, 0);
     }
 
     void DoubleJump()
